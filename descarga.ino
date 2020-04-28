@@ -1,7 +1,7 @@
-#include "Ultrasonic.h"
+#include <Servo.h>
 
-const int trigPin = 2;
-const int echoPin = 3;
+const int pinoSensor = 2;
+const int pinoServo = 3;
 
 const int ledRGBVermelho = 5;
 const int ledRGBVerde = 6;
@@ -12,13 +12,16 @@ const int ledPausa = 12;
 bool numeroUm = false;
 bool numeroDois = false;
 
-Ultrasonic ultrasonic(trigPin, echoPin);
+Servo objetoServo;
 
 void setup() {
 
   Serial.begin (9600);
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
+
+  objetoServo.attach(pinoServo);
+  objetoServo.write(0);
+
+  pinMode(pinoSensor, INPUT);
 
   pinMode(ledRGBVermelho, OUTPUT);
   analogWrite(ledRGBVermelho, 0);
@@ -39,15 +42,11 @@ void loop() {
 
   rgbDesligado();
 
-  long distance;
-  distance = getDistancia();
-
   int contadorDescarga = 0;
 
-  while (distance < 10) {
+  while (digitalRead(pinoSensor) == LOW) {
 
     contadorDescarga++;
-    distance = getDistancia();
 
     if ( contadorDescarga > 10 ) {
 
@@ -80,14 +79,14 @@ void loop() {
 
       numeroUm = false;
       rgbAzul();
-      delay(6000);
+      descargaNumeroUm();
     }
 
     if ( numeroDois ) {
 
       numeroDois = false;
       rgbAzul();
-      delay(10000);
+      descargaNumeroDois();
     }
 
     rgbDesligado();
@@ -95,20 +94,34 @@ void loop() {
   }
 }
 
-long getDistancia() {
+void descargaNumeroUm() {
 
-  long duration, distance;
+  int posicao = 0;
 
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
+  for (posicao = 0; posicao < 180; posicao++) {
+    objetoServo.write(posicao);
+    delay(10);
+  }
+  delay(500);
+  for (posicao = 180; posicao >= 0; posicao--) {
+    objetoServo.write(posicao);
+    delay(10);
+  }
+}
 
-  duration = pulseIn(echoPin, HIGH);
-  distance = (duration / 2) / 29.1;
+void descargaNumeroDois() {
 
-  return distance;
+  int posicao = 0;
+
+  for (posicao = 0; posicao < 180; posicao++) {
+    objetoServo.write(posicao);
+    delay(10);
+  }
+  delay(1000);
+  for (posicao = 180; posicao >= 0; posicao--) {
+    objetoServo.write(posicao);
+    delay(10);
+  }
 }
 
 void esperaDescarga() {
