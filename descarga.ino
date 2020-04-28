@@ -3,9 +3,9 @@
 const int pinoSensor = 2;
 const int pinoServo = 3;
 
-const int ledRGBVermelho = 5;
-const int ledRGBVerde = 6;
-const int ledRGBAzul = 9;
+const int ledRGBVermelho = 4;
+const int ledRGBVerde = 5;
+const int ledRGBAzul = 6;
 
 const int ledPausa = 12;
 
